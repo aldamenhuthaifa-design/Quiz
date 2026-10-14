@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>كويز نهاية الحصة | العمليات الحسابية</title>
+  <style>
+    :root{
+      --bg1:#172554;
+      --bg2:#1e3a8a;
+      --accent:#93c5fd;
+      --accent2:#f8fafc;
+      --button:#2563eb;
+      --button2:#06b6d4;
+      --text:#f8fafc;
+      --muted:#dbeafe;
+      --line:rgba(255,255,255,.16);
+      --good:#22c55e;
+      --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Tahoma, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 4%, rgba(147,197,253,.22), transparent 24rem),
+        radial-gradient(circle at 86% 10%, rgba(6,182,212,.22), transparent 22rem),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+    }
+    .wrap{width:min(980px,94vw);margin:auto;padding:28px 0}
+    .hero{min-height:88vh;display:grid;place-items:center}
+    .ticket,.card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));
+      box-shadow:0 20px 60px rgba(0,0,0,.28);
+      backdrop-filter:blur(12px);
+    }
+    .ticket{width:min(760px,100%);padding:34px;overflow:hidden;position:relative}
+    .label{
+      display:inline-flex;
+      padding:8px 13px;
+      border-radius:999px;
+      border:1px solid rgba(248,250,252,.42);
+      color:var(--accent2);
+      background:rgba(0,0,0,.18);
+      font-size:14px;
+    }
+    h1{margin:20px 0 10px;font-size:clamp(34px,6vw,58px);line-height:1.15}
+    .subtitle{color:var(--muted);font-size:18px;line-height:1.8;margin:0 0 26px}
+    .level-track{display:grid;gap:12px;margin:22px 0 26px}
+    .level-row{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center;color:var(--muted)}
+    .level-row strong{color:var(--accent2)}
+    .meter{height:12px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+    .meter span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--button2))}
+    button{
+      border:0;
+      border-radius:14px;
+      min-height:48px;
+      padding:0 22px;
+      color:white;
+      background:linear-gradient(135deg,var(--button),var(--button2));
+      box-shadow:0 14px 28px rgba(37,99,235,.25);
+      font-family:inherit;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .ghost{background:rgba(255,255,255,.1);border:1px solid var(--line);box-shadow:none}
+    .quiz,.result{display:none}
+    .topbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:18px}
+    .pill{border:1px solid rgba(248,250,252,.34);background:rgba(255,255,255,.08);border-radius:999px;padding:9px 13px;color:var(--accent2);font-size:14px}
+    .progress{height:9px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-bottom:18px}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--button2));transition:.25s}
+    .card{padding:24px}
+    .q{font-size:30px;line-height:1.8;margin:0 0 18px;text-align:center;color:#fff;direction:ltr}
+    .choices{display:grid;gap:12px}
+    .choice{
+      width:100%;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:16px;
+      padding:15px 16px;
+      color:var(--text);
+      background:rgba(255,255,255,.09);
+      font-size:22px;
+      text-align:center;
+      direction:ltr;
+      box-shadow:none;
+    }
+    .choice:hover,.choice.selected{border-color:var(--accent2);background:rgba(147,197,253,.16)}
+    .actions{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
+    .dots{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0 0;justify-content:center}
+    .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.24)}
+    .dot.done{background:var(--accent2)}
+    .score{font-size:44px;color:var(--accent2);margin:8px 0;font-weight:800}
+    .review{margin-top:18px;display:grid;gap:12px}
+    .review-item{border:1px solid var(--line);border-radius:14px;padding:14px;background:rgba(255,255,255,.07);line-height:1.8}
+    .ok{color:var(--good);font-weight:700}
+    .no{color:var(--bad);font-weight:700}
+    @media (max-width:640px){
+      .ticket{padding:26px 22px}
+      .topbar,.actions{flex-direction:column;align-items:stretch}
+      .q{font-size:26px}
+      .level-row{grid-template-columns:76px 1fr}
+    }
+  </style>
+  <style>
+    .teacher-name{margin:0 0 20px;text-align:center;color:var(--accent2);font-size:clamp(20px,4vw,26px);font-weight:700;line-height:1.6}
+    math{font-weight:normal}
+    .score{direction:ltr;unicode-bidi:isolate}
+    @media(max-width:640px){.q{font-size:22px}.q math{font-size:1.15em}}
+    @media(max-width:360px){.q math{font-size:1em}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero" id="start">
+      <div class="ticket">
+        <p class="teacher-name">أ. حذيفه الضامن</p>
+        <span class="label">قدرات الرياضيات | ارفع مستوى فهمك</span>
+        <h1>كويز نهاية الحصة</h1>
+        <p class="subtitle">هل وصلت لمستوى الإتقان؟ اختبر نفسك في العمليات الحسابية، واختر الناتج الصحيح لكل سؤال.</p>
+        <div class="level-track">
+          <div class="level-row"><strong>الفهم</strong><div class="meter"><span style="width:82%"></span></div></div>
+          <div class="level-row"><strong>التطبيق</strong><div class="meter"><span style="width:66%"></span></div></div>
+          <div class="level-row"><strong>الإتقان</strong><div class="meter"><span style="width:48%"></span></div></div>
+        </div>
+        <button onclick="startQuiz()">اختبر مستواك</button>
+      </div>
+    </section>
+
+    <section class="quiz" id="quiz">
+      <div class="topbar">
+        <div class="pill" id="counter"></div>
+        <div class="pill">بدون وقت</div>
+      </div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="card">
+        <p class="q" id="question"></p>
+        <div class="choices" id="choices"></div>
+        <div class="dots" id="dots"></div>
+        <div class="actions">
+          <button class="ghost" onclick="prevQuestion()">السابق</button>
+          <button id="nextBtn" onclick="nextQuestion()">التالي</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="result" id="result">
+      <div class="card">
+        <span class="label">تم اعتماد الكويز</span>
+        <h1>تم اعتماد الكويز</h1>
+        <div class="score" id="score"></div>
+        <p class="subtitle" id="message"></p>
+        <div class="review" id="review"></div>
+        <div class="actions">
+          <button class="ghost" onclick="location.reload()">إعادة التجربة</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      { text: "127 - 35 =", choices: ["82", "92", "102", "192"], answer: 1 },
+      { text: "832 × 15 =", choices: ["12480", "12080", "12680", "11480"], answer: 0 },
+      { text: "10915 + 7273 =", choices: ["17188", "18188", "18288", "19188"], answer: 1 },
+      { text: "970 × 60 =", choices: ["5820", "58020", "58200", "59200"], answer: 2 },
+      { text: "1729 - 1538 =", choices: ["181", "191", "201", "291"], answer: 1 },
+      { text: "18.21 × 5.1 =", choices: ["92.871", "91.871", "93.721", "928.71"], answer: 0 }
+    ];
+
+    let current = 0;
+    const answers = Array(questions.length).fill(null);
+
+    function startQuiz(){
+      document.getElementById("start").style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+      renderQuestion();
+    }
+
+    function renderPlainQuestion(text){
+      const safe=text.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+      return `<bdi dir="${/^[\d .+\-×÷=()]+$/.test(text) ? "ltr" : "rtl"}">${safe}</bdi>`;
+    }
+    function renderQuestion(){
+      const item = questions[current];
+      document.getElementById("counter").textContent = `السؤال ${current + 1} من ${questions.length}`;
+      document.getElementById("bar").style.width = `${((current + 1) / questions.length) * 100}%`;
+      document.getElementById("question").innerHTML = renderPlainQuestion(item.text);
+      document.getElementById("choices").innerHTML = item.choices.map((choice, index) =>
+        `<button class="choice ${answers[current] === index ? "selected" : ""}" onclick="selectAnswer(${index})">${choice}</button>`
+      ).join("");
+      document.getElementById("dots").innerHTML = questions.map((_, index) =>
+        `<span class="dot ${answers[index] !== null ? "done" : ""}"></span>`
+      ).join("");
+      document.getElementById("nextBtn").textContent = current === questions.length - 1 ? "تسليم الكويز" : "التالي";
+    }
+
+    function selectAnswer(index){
+      answers[current] = index;
+      renderQuestion();
+    }
+
+    function prevQuestion(){
+      if(current > 0){
+        current--;
+        renderQuestion();
+      }
+    }
+
+    function nextQuestion(){
+      if(current < questions.length - 1){
+        current++;
+        renderQuestion();
+      }else{
+        submitQuiz();
+      }
+    }
+
+    function submitQuiz(){
+      let correct = 0;
+      questions.forEach((q, i) => {
+        if(answers[i] === q.answer) correct++;
+      });
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("result").style.display = "block";
+      document.getElementById("score").textContent = `${correct} / ${questions.length}`;
+      document.getElementById("message").textContent =
+        correct === questions.length ? "ممتاز، وصلت لمستوى الإتقان." :
+        correct >= Math.ceil(questions.length / 2) ? "جيد جدًا، راجع الأخطاء البسيطة وثبّت الطريقة." :
+        "لا بأس، راجع طريقة الحل ثم أعد المحاولة.";
+      document.getElementById("review").innerHTML = questions.map((q, i) => {
+        const isCorrect = answers[i] === q.answer;
+        const studentAnswer = answers[i] === null ? "غير مجاب" : q.choices[answers[i]];
+        return `
+          <div class="review-item">
+            <strong>السؤال ${i + 1}</strong><br>
+            ${renderPlainQuestion(q.text)}<br>
+            إجابتك: <span class="${isCorrect ? "ok" : "no"}">${studentAnswer}</span><br>
+            الإجابة الصحيحة: <span class="ok">${q.choices[q.answer]}</span>
+          </div>
+        `;
+      }).join("");
+    }
+  </script>
+</body>
+</html>
